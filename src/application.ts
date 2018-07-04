@@ -5,11 +5,19 @@ import {MySequence} from './sequence';
 /* tslint:disable:no-unused-variable */
 // Binding and Booter imports are required to infer types for BootMixin!
 import {BootMixin, Booter, Binding} from '@loopback/boot';
+import {RepositoryMixin, juggler} from '@loopback/repository';
 /* tslint:enable:no-unused-variable */
 
-export class Day_6Application extends BootMixin(RestApplication) {
+export class Day_6Application extends BootMixin(
+  RepositoryMixin(RestApplication),
+) {
   constructor(options?: ApplicationConfig) {
-    super(options);
+    // super(options);
+    super({
+      rest: {
+        port: process.env.PORT || 3000,
+      },
+    });
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -28,7 +36,6 @@ export class Day_6Application extends BootMixin(RestApplication) {
 
   async start() {
     await super.start();
-
     const server = await this.getServer(RestServer);
     const port = await server.get(RestBindings.PORT);
     console.log(`Server is running at http://127.0.0.1:${port}`);
